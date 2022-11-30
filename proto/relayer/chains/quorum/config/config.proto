@@ -1,0 +1,12 @@
+syntax = "proto3";
+package relayer.chains.quorum.config;
+
+option go_package = "github.com/datachainlab/ibc-quorum-relay/module";
+
+message ChainConfig {
+  string rpc_addr = 1;
+}
+
+message ProverConfig {
+  string rpc_addr = 1;
+}
