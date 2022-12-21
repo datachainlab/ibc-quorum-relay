@@ -23,7 +23,12 @@ var _ = math.Inf
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
 type ChainConfig struct {
-	RpcAddr string `protobuf:"bytes,1,opt,name=rpc_addr,json=rpcAddr,proto3" json:"rpc_addr,omitempty"`
+	ChainId           string `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
+	RpcAddr           string `protobuf:"bytes,2,opt,name=rpc_addr,json=rpcAddr,proto3" json:"rpc_addr,omitempty"`
+	EthChainId        int64  `protobuf:"varint,3,opt,name=eth_chain_id,json=ethChainId,proto3" json:"eth_chain_id,omitempty"`
+	PrivateKey        string `protobuf:"bytes,4,opt,name=private_key,json=privateKey,proto3" json:"private_key,omitempty"`
+	IbcHostAddress    string `protobuf:"bytes,5,opt,name=ibc_host_address,json=ibcHostAddress,proto3" json:"ibc_host_address,omitempty"`
+	IbcHandlerAddress string `protobuf:"bytes,6,opt,name=ibc_handler_address,json=ibcHandlerAddress,proto3" json:"ibc_handler_address,omitempty"`
 }
 
 func (m *ChainConfig) Reset()         { *m = ChainConfig{} }
@@ -59,6 +64,13 @@ func (m *ChainConfig) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ChainConfig proto.InternalMessageInfo
 
+func (m *ChainConfig) GetChainId() string {
+	if m != nil {
+		return m.ChainId
+	}
+	return ""
+}
+
 func (m *ChainConfig) GetRpcAddr() string {
 	if m != nil {
 		return m.RpcAddr
@@ -66,8 +78,35 @@ func (m *ChainConfig) GetRpcAddr() string {
 	return ""
 }
 
+func (m *ChainConfig) GetEthChainId() int64 {
+	if m != nil {
+		return m.EthChainId
+	}
+	return 0
+}
+
+func (m *ChainConfig) GetPrivateKey() string {
+	if m != nil {
+		return m.PrivateKey
+	}
+	return ""
+}
+
+func (m *ChainConfig) GetIbcHostAddress() string {
+	if m != nil {
+		return m.IbcHostAddress
+	}
+	return ""
+}
+
+func (m *ChainConfig) GetIbcHandlerAddress() string {
+	if m != nil {
+		return m.IbcHandlerAddress
+	}
+	return ""
+}
+
 type ProverConfig struct {
-	RpcAddr string `protobuf:"bytes,1,opt,name=rpc_addr,json=rpcAddr,proto3" json:"rpc_addr,omitempty"`
 }
 
 func (m *ProverConfig) Reset()         { *m = ProverConfig{} }
@@ -103,13 +142,6 @@ func (m *ProverConfig) XXX_DiscardUnknown() {
 
 var xxx_messageInfo_ProverConfig proto.InternalMessageInfo
 
-func (m *ProverConfig) GetRpcAddr() string {
-	if m != nil {
-		return m.RpcAddr
-	}
-	return ""
-}
-
 func init() {
 	proto.RegisterType((*ChainConfig)(nil), "relayer.chains.quorum.config.ChainConfig")
 	proto.RegisterType((*ProverConfig)(nil), "relayer.chains.quorum.config.ProverConfig")
@@ -120,20 +152,26 @@ func init() {
 }
 
 var fileDescriptor_22c9906801a6a849 = []byte{
-	// 196 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0x2c, 0x4a, 0xcd, 0x49,
-	0xac, 0x4c, 0x2d, 0xd2, 0x4f, 0xce, 0x48, 0xcc, 0xcc, 0x2b, 0xd6, 0x2f, 0x2c, 0xcd, 0x2f, 0x2a,
-	0xcd, 0xd5, 0x4f, 0xce, 0xcf, 0x4b, 0xcb, 0x4c, 0x87, 0x52, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9,
-	0x42, 0x32, 0x50, 0xa5, 0x7a, 0x10, 0xa5, 0x7a, 0x10, 0xa5, 0x7a, 0x10, 0x35, 0x4a, 0x1a, 0x5c,
-	0xdc, 0xce, 0x20, 0x71, 0x67, 0x30, 0x57, 0x48, 0x92, 0x8b, 0xa3, 0xa8, 0x20, 0x39, 0x3e, 0x31,
-	0x25, 0xa5, 0x48, 0x82, 0x51, 0x81, 0x51, 0x83, 0x33, 0x88, 0xbd, 0xa8, 0x20, 0xd9, 0x31, 0x25,
-	0xa5, 0x48, 0x49, 0x93, 0x8b, 0x27, 0xa0, 0x28, 0xbf, 0x2c, 0xb5, 0x88, 0xa0, 0x52, 0x27, 0xcf,
-	0x13, 0x8f, 0xe4, 0x18, 0x2f, 0x3c, 0x92, 0x63, 0x7c, 0xf0, 0x48, 0x8e, 0x71, 0xc2, 0x63, 0x39,
-	0x86, 0x0b, 0x8f, 0xe5, 0x18, 0x6e, 0x3c, 0x96, 0x63, 0x88, 0xd2, 0x4f, 0xcf, 0x2c, 0xc9, 0x28,
-	0x4d, 0xd2, 0x4b, 0xce, 0xcf, 0xd5, 0x4f, 0x49, 0x2c, 0x49, 0x04, 0xbb, 0x29, 0x27, 0x31, 0x49,
-	0x3f, 0x33, 0x29, 0x59, 0x17, 0xe2, 0x32, 0x5d, 0xb0, 0x7b, 0xf5, 0x73, 0xf3, 0x53, 0x4a, 0x73,
-	0x52, 0x93, 0xd8, 0xc0, 0x9e, 0x30, 0x06, 0x04, 0x00, 0x00, 0xff, 0xff, 0x81, 0x77, 0x8e, 0xe0,
-	0xf1, 0x00, 0x00, 0x00,
+	// 298 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x3c, 0xd0, 0xbd, 0x4e, 0xc3, 0x30,
+	0x10, 0x07, 0xf0, 0x9a, 0x42, 0x01, 0xb7, 0xaa, 0x20, 0x2c, 0x41, 0x42, 0xa6, 0xea, 0x54, 0x86,
+	0xda, 0x03, 0x4f, 0x50, 0xba, 0x50, 0xb1, 0xa0, 0x8e, 0x2c, 0x91, 0xbf, 0x68, 0x2c, 0xd2, 0x3a,
+	0x5c, 0x9c, 0x4a, 0x79, 0x0b, 0x1e, 0x8b, 0xb1, 0x23, 0x63, 0x95, 0xbc, 0x08, 0x8a, 0x1d, 0x75,
+	0xb2, 0xee, 0xfe, 0xbf, 0x93, 0x75, 0x87, 0x9f, 0x40, 0x67, 0xbc, 0xd2, 0xc0, 0x64, 0xca, 0xcd,
+	0xae, 0x60, 0xdf, 0xa5, 0x85, 0x72, 0xcb, 0xa4, 0xdd, 0x7d, 0x9a, 0x4d, 0xf7, 0xd0, 0x1c, 0xac,
+	0xb3, 0xd1, 0x43, 0x47, 0x69, 0xa0, 0x34, 0x50, 0x1a, 0xcc, 0xf4, 0x88, 0xf0, 0x70, 0xd9, 0x06,
+	0x4b, 0x5f, 0x47, 0xf7, 0xf8, 0xca, 0xbb, 0xc4, 0xa8, 0x18, 0x4d, 0xd0, 0xec, 0x7a, 0x7d, 0xe9,
+	0xeb, 0x95, 0x6a, 0x23, 0xc8, 0x65, 0xc2, 0x95, 0x82, 0xf8, 0x2c, 0x44, 0x90, 0xcb, 0x85, 0x52,
+	0x10, 0x4d, 0xf0, 0x48, 0xbb, 0x34, 0x39, 0x4d, 0xf6, 0x27, 0x68, 0xd6, 0x5f, 0x63, 0xed, 0xd2,
+	0x65, 0x37, 0xfc, 0x88, 0x87, 0x39, 0x98, 0x3d, 0x77, 0x3a, 0xf9, 0xd2, 0x55, 0x7c, 0xee, 0xe7,
+	0x71, 0xd7, 0x7a, 0xd3, 0x55, 0x34, 0xc3, 0x37, 0x46, 0xc8, 0x24, 0xb5, 0x85, 0xf3, 0x5f, 0xe8,
+	0xa2, 0x88, 0x2f, 0xbc, 0x1a, 0x1b, 0x21, 0x5f, 0x6d, 0xe1, 0x16, 0xa1, 0x1b, 0x51, 0x7c, 0xe7,
+	0x25, 0xdf, 0xa9, 0x4c, 0xc3, 0x09, 0x0f, 0x3c, 0xbe, 0x6d, 0x71, 0x48, 0x3a, 0x3f, 0x1d, 0xe3,
+	0xd1, 0x3b, 0xd8, 0xbd, 0x86, 0xb0, 0xe2, 0xcb, 0xea, 0xb7, 0x26, 0xe8, 0x50, 0x13, 0x74, 0xac,
+	0x09, 0xfa, 0x69, 0x48, 0xef, 0xd0, 0x90, 0xde, 0x5f, 0x43, 0x7a, 0x1f, 0x6c, 0x63, 0x5c, 0x5a,
+	0x0a, 0x2a, 0xed, 0x96, 0x29, 0xee, 0xb8, 0xdf, 0x27, 0xe3, 0x82, 0x19, 0x21, 0xe7, 0xe1, 0x6e,
+	0x73, 0x7f, 0x4d, 0xb6, 0xb5, 0xaa, 0xcc, 0xb4, 0x18, 0xf8, 0x13, 0x3f, 0xff, 0x07, 0x00, 0x00,
+	0xff, 0xff, 0xeb, 0x2e, 0x55, 0x67, 0x8f, 0x01, 0x00, 0x00,
 }
 
 func (m *ChainConfig) Marshal() (dAtA []byte, err error) {
@@ -156,10 +194,43 @@ func (m *ChainConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
+	if len(m.IbcHandlerAddress) > 0 {
+		i -= len(m.IbcHandlerAddress)
+		copy(dAtA[i:], m.IbcHandlerAddress)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.IbcHandlerAddress)))
+		i--
+		dAtA[i] = 0x32
+	}
+	if len(m.IbcHostAddress) > 0 {
+		i -= len(m.IbcHostAddress)
+		copy(dAtA[i:], m.IbcHostAddress)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.IbcHostAddress)))
+		i--
+		dAtA[i] = 0x2a
+	}
+	if len(m.PrivateKey) > 0 {
+		i -= len(m.PrivateKey)
+		copy(dAtA[i:], m.PrivateKey)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.PrivateKey)))
+		i--
+		dAtA[i] = 0x22
+	}
+	if m.EthChainId != 0 {
+		i = encodeVarintConfig(dAtA, i, uint64(m.EthChainId))
+		i--
+		dAtA[i] = 0x18
+	}
 	if len(m.RpcAddr) > 0 {
 		i -= len(m.RpcAddr)
 		copy(dAtA[i:], m.RpcAddr)
 		i = encodeVarintConfig(dAtA, i, uint64(len(m.RpcAddr)))
+		i--
+		dAtA[i] = 0x12
+	}
+	if len(m.ChainId) > 0 {
+		i -= len(m.ChainId)
+		copy(dAtA[i:], m.ChainId)
+		i = encodeVarintConfig(dAtA, i, uint64(len(m.ChainId)))
 		i--
 		dAtA[i] = 0xa
 	}
@@ -186,13 +257,6 @@ func (m *ProverConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
 	_ = i
 	var l int
 	_ = l
-	if len(m.RpcAddr) > 0 {
-		i -= len(m.RpcAddr)
-		copy(dAtA[i:], m.RpcAddr)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.RpcAddr)))
-		i--
-		dAtA[i] = 0xa
-	}
 	return len(dAtA) - i, nil
 }
 
@@ -213,7 +277,26 @@ func (m *ChainConfig) Size() (n int) {
 	}
 	var l int
 	_ = l
+	l = len(m.ChainId)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
 	l = len(m.RpcAddr)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	if m.EthChainId != 0 {
+		n += 1 + sovConfig(uint64(m.EthChainId))
+	}
+	l = len(m.PrivateKey)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	l = len(m.IbcHostAddress)
+	if l > 0 {
+		n += 1 + l + sovConfig(uint64(l))
+	}
+	l = len(m.IbcHandlerAddress)
 	if l > 0 {
 		n += 1 + l + sovConfig(uint64(l))
 	}
@@ -226,10 +309,6 @@ func (m *ProverConfig) Size() (n int) {
 	}
 	var l int
 	_ = l
-	l = len(m.RpcAddr)
-	if l > 0 {
-		n += 1 + l + sovConfig(uint64(l))
-	}
 	return n
 }
 
@@ -270,6 +349,38 @@ func (m *ChainConfig) Unmarshal(dAtA []byte) error {
 		switch fieldNum {
 		case 1:
 			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field ChainId", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthConfig
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.ChainId = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 2:
+			if wireType != 2 {
 				return fmt.Errorf("proto: wrong wireType = %d for field RpcAddr", wireType)
 			}
 			var stringLen uint64
@@ -299,6 +410,121 @@ func (m *ChainConfig) Unmarshal(dAtA []byte) error {
 				return io.ErrUnexpectedEOF
 			}
 			m.RpcAddr = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 3:
+			if wireType != 0 {
+				return fmt.Errorf("proto: wrong wireType = %d for field EthChainId", wireType)
+			}
+			m.EthChainId = 0
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				m.EthChainId |= int64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+		case 4:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field PrivateKey", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthConfig
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.PrivateKey = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 5:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IbcHostAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthConfig
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IbcHostAddress = string(dAtA[iNdEx:postIndex])
+			iNdEx = postIndex
+		case 6:
+			if wireType != 2 {
+				return fmt.Errorf("proto: wrong wireType = %d for field IbcHandlerAddress", wireType)
+			}
+			var stringLen uint64
+			for shift := uint(0); ; shift += 7 {
+				if shift >= 64 {
+					return ErrIntOverflowConfig
+				}
+				if iNdEx >= l {
+					return io.ErrUnexpectedEOF
+				}
+				b := dAtA[iNdEx]
+				iNdEx++
+				stringLen |= uint64(b&0x7F) << shift
+				if b < 0x80 {
+					break
+				}
+			}
+			intStringLen := int(stringLen)
+			if intStringLen < 0 {
+				return ErrInvalidLengthConfig
+			}
+			postIndex := iNdEx + intStringLen
+			if postIndex < 0 {
+				return ErrInvalidLengthConfig
+			}
+			if postIndex > l {
+				return io.ErrUnexpectedEOF
+			}
+			m.IbcHandlerAddress = string(dAtA[iNdEx:postIndex])
 			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
@@ -350,38 +576,6 @@ func (m *ProverConfig) Unmarshal(dAtA []byte) error {
 			return fmt.Errorf("proto: ProverConfig: illegal tag %d (wire type %d)", fieldNum, wire)
 		}
 		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RpcAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthConfig
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthConfig
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RpcAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
 		default:
 			iNdEx = preIndex
 			skippy, err := skipConfig(dAtA[iNdEx:])
