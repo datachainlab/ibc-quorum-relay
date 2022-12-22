@@ -1,0 +1,26 @@
+syntax = "proto3";
+package ibc.lightclients.qbft.v1;
+
+option go_package = "github.com/datachainlab/ibc-quorum-relay/module";
+
+message ClientState {
+  uint32 trust_level_numerator = 1;
+  uint32 trust_level_denominator = 2;
+  uint64 trusting_period = 3;  // as unix time
+  int32 chain_id = 4;
+  int32 latest_height = 5;
+  int32 frozen = 6; // boolean value
+  bytes ibc_store_address = 7;
+}
+
+message ConsensusState {
+  uint64 timestamp = 1; // as unix time
+  bytes root = 2; // for state verification via verifyMembership
+  repeated bytes validator_set = 3;
+}
+
+message Header {
+  int32 trusted_height = 1;
+  bytes account_proof = 2;
+  bytes go_quorum_header_rlp = 3;
+}

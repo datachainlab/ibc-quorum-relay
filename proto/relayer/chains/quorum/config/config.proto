@@ -12,4 +12,8 @@ message ChainConfig {
   string ibc_handler_address = 6;
 }
 
-message ProverConfig {}
+message ProverConfig {
+  uint32 trust_level_numerator = 1;
+  uint32 trust_level_denominator = 2;
+  uint64 trusting_period = 3;  // as unix time
+}
