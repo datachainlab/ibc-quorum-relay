@@ -6,6 +6,7 @@ require (
 	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/cosmos/cosmos-sdk v0.45.7
 	github.com/cosmos/ibc-go/v4 v4.0.0
+	github.com/datachainlab/ibc-mock-client v0.2.1
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/gogo/protobuf v1.3.3
 	github.com/hyperledger-labs/yui-ibc-solidity v0.2.5-0.20221130073947-3315e5fa0f5b
