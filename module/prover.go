@@ -17,17 +17,18 @@ import (
 	"github.com/ethereum/go-ethereum/core/types"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/ethereum/go-ethereum/rlp"
+	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/relay/ethereum"
 	"github.com/hyperledger-labs/yui-relayer/core"
 )
 
 type Prover struct {
-	chain  *Chain
+	chain  *ethereum.Chain
 	config ProverConfig
 }
 
 var _ core.ProverI = (*Prover)(nil)
 
-func NewProver(chain *Chain, config ProverConfig) *Prover {
+func NewProver(chain *ethereum.Chain, config ProverConfig) *Prover {
 	return &Prover{chain: chain, config: config}
 }
 
@@ -54,7 +55,7 @@ func (pr *Prover) GetChainID() string {
 // QueryHeader returns the header corresponding to the height
 func (pr *Prover) QueryHeader(height int64) (core.HeaderI, error) {
 	// get RLP-encoded header
-	block, err := pr.chain.ethClient.BlockByNumber(context.TODO(), big.NewInt(height))
+	block, err := pr.chain.Client().BlockByNumber(context.TODO(), big.NewInt(height))
 	if err != nil {
 		return nil, err
 	}
@@ -77,7 +78,7 @@ func (pr *Prover) QueryHeader(height int64) (core.HeaderI, error) {
 
 // QueryLatestHeader returns the latest header from the chain
 func (pr *Prover) QueryLatestHeader() (out core.HeaderI, err error) {
-	bn, err := pr.chain.ethClient.BlockNumber(context.TODO())
+	bn, err := pr.chain.Client().BlockNumber(context.TODO())
 	if err != nil {
 		return nil, err
 	}
@@ -86,7 +87,7 @@ func (pr *Prover) QueryLatestHeader() (out core.HeaderI, err error) {
 
 // GetLatestLightHeight returns the latest height on the light client
 func (pr *Prover) GetLatestLightHeight() (int64, error) {
-	bn, err := pr.chain.ethClient.BlockNumber(context.TODO())
+	bn, err := pr.chain.Client().BlockNumber(context.TODO())
 	if err != nil {
 		return 0, err
 	}
@@ -109,7 +110,7 @@ func (pr *Prover) CreateMsgCreateClient(clientID string, dstHeader core.HeaderI,
 	// recover account data from account proof
 	rlpAccount, err := verifyProof(
 		ethHeader.Root,
-		crypto.Keccak256Hash(pr.chain.config.IBCHandlerAddress().Bytes()).Bytes(),
+		crypto.Keccak256Hash(pr.chain.Config().IBCHandlerAddress().Bytes()).Bytes(),
 		accountProof,
 	)
 	var account state.Account
@@ -127,15 +128,21 @@ func (pr *Prover) CreateMsgCreateClient(clientID string, dstHeader core.HeaderI,
 		validatorSet = append(validatorSet, v.Bytes())
 	}
 
+	// get chain id
+	chainID, err := pr.chain.Client().ChainID(context.TODO())
+	if err != nil {
+		return nil, err
+	}
+
 	// create initial client state
 	clientState := ClientState{
 		TrustLevelNumerator:   pr.config.TrustLevelNumerator,
 		TrustLevelDenominator: pr.config.TrustLevelDenominator,
 		TrustingPeriod:        pr.config.TrustingPeriod,
-		ChainId:               int32(pr.chain.ethChainID.Int64()),
+		ChainId:               int32(chainID.Int64()),
 		LatestHeight:          int32(ethHeader.Number.Int64()),
 		Frozen:                0,
-		IbcStoreAddress:       pr.chain.config.IBCHandlerAddress().Bytes(),
+		IbcStoreAddress:       pr.chain.Config().IBCHandlerAddress().Bytes(),
 	}
 	anyClientState, err := codectypes.NewAnyWithValue(&clientState)
 	if err != nil {
@@ -174,7 +181,7 @@ func (pr *Prover) SetupHeader(dst core.LightClientIBCQueryierI, baseSrcHeader co
 		return nil, err
 	}
 	var cs exported.ClientState
-	if err := pr.chain.codec.UnpackAny(csRes.ClientState, &cs); err != nil {
+	if err := pr.chain.Codec().UnpackAny(csRes.ClientState, &cs); err != nil {
 		return nil, err
 	}
 
@@ -201,7 +208,7 @@ func (pr *Prover) QueryClientConsensusStateWithProof(height int64, dstClientCons
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.FullConsensusStateKey(
-		pr.chain.pathEnd.ClientID,
+		pr.chain.Path().ClientID,
 		dstClientConsHeight,
 	), height)
 	if err != nil {
@@ -218,7 +225,7 @@ func (pr *Prover) QueryClientStateWithProof(height int64) (*clienttypes.QueryCli
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.FullClientStateKey(
-		pr.chain.pathEnd.ClientID,
+		pr.chain.Path().ClientID,
 	), height)
 	if err != nil {
 		return nil, err
@@ -234,7 +241,7 @@ func (pr *Prover) QueryConnectionWithProof(height int64) (*conntypes.QueryConnec
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.ConnectionKey(
-		pr.chain.pathEnd.ConnectionID,
+		pr.chain.Path().ConnectionID,
 	), height)
 	if err != nil {
 		return nil, err
@@ -250,8 +257,8 @@ func (pr *Prover) QueryChannelWithProof(height int64) (chanRes *chantypes.QueryC
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.ChannelKey(
-		pr.chain.pathEnd.PortID,
-		pr.chain.pathEnd.ChannelID,
+		pr.chain.Path().PortID,
+		pr.chain.Path().ChannelID,
 	), height)
 	if err != nil {
 		return nil, err
@@ -267,8 +274,8 @@ func (pr *Prover) QueryPacketCommitmentWithProof(height int64, seq uint64) (comR
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.PacketCommitmentKey(
-		pr.chain.pathEnd.PortID,
-		pr.chain.pathEnd.ChannelID,
+		pr.chain.Path().PortID,
+		pr.chain.Path().ChannelID,
 		seq,
 	), height)
 	if err != nil {
@@ -285,8 +292,8 @@ func (pr *Prover) QueryPacketAcknowledgementCommitmentWithProof(height int64, se
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.PacketAcknowledgementKey(
-		pr.chain.pathEnd.PortID,
-		pr.chain.pathEnd.ChannelID,
+		pr.chain.Path().PortID,
+		pr.chain.Path().ChannelID,
 		seq,
 	), height)
 	if err != nil {

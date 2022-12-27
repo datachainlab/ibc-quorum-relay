@@ -4,6 +4,7 @@ import (
 	fmt "fmt"
 
 	"github.com/ethereum/go-ethereum/common"
+	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/relay/ethereum"
 	"github.com/hyperledger-labs/yui-relayer/core"
 )
 
@@ -15,7 +16,7 @@ func (c ChainConfig) Build() (core.ChainI, error) {
 }
 
 func (c ProverConfig) Build(chain core.ChainI) (core.ProverI, error) {
-	chain_, ok := chain.(*Chain)
+	chain_, ok := chain.(*ethereum.Chain)
 	if !ok {
 		return nil, fmt.Errorf("chain type must be %T, not %T", &Chain{}, chain)
 	}

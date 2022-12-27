@@ -2,12 +2,11 @@ package module
 
 import (
 	fmt "fmt"
-	"strconv"
+	"math/big"
 
 	"github.com/ethereum/go-ethereum/common"
 	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
-	"github.com/ethereum/go-ethereum/rlp"
 	"github.com/ethereum/go-ethereum/trie"
 )
 
@@ -26,43 +25,16 @@ type storageResult struct {
 	Proof []string     `json:"proof"`
 }
 
-func (pr *Prover) ethGetProof(address common.Address, storageKeys []common.Hash, height int64) (*accountResult, error) {
-	blockNumber := "0x" + strconv.FormatInt(height, 16)
-	var accountResult accountResult
-	if err := pr.chain.rpcClient.Call(&accountResult, "eth_getProof", address, storageKeys, blockNumber); err != nil {
-		return nil, err
-	}
-	return &accountResult, nil
-}
-
 func (pr *Prover) getAccountProof(height int64) ([]byte, error) {
-	// call eth_getProof
-	accountResult, err := pr.ethGetProof(
-		pr.chain.config.IBCHandlerAddress(),
+	stateProof, err := pr.chain.Client().GetStateProof(
+		pr.chain.Config().IBCHandlerAddress(),
 		nil,
-		height,
+		big.NewInt(height),
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	// get account proof
-	var accountProof [][]byte
-	for _, hexProof := range accountResult.AccountProof {
-		proof, err := hexutil.Decode(hexProof)
-		if err != nil {
-			return nil, err
-		}
-		accountProof = append(accountProof, proof)
-	}
-
-	// encode account proof
-	rlpAccountProof, err := rlp.EncodeToBytes(accountProof)
-	if err != nil {
-		return nil, err
-	}
-
-	return rlpAccountProof, nil
+	return stateProof.AccountProofRLP, nil
 }
 
 func (pr *Prover) getStateCommitmentProof(path []byte, height int64) ([]byte, error) {
@@ -71,34 +43,21 @@ func (pr *Prover) getStateCommitmentProof(path []byte, height int64) ([]byte, er
 		crypto.Keccak256Hash(path).Bytes(),
 		common.Hash{}.Bytes()...,
 	))
+	marshaledSlot, err := slot.MarshalText()
+	if err != nil {
+		return nil, err
+	}
 
 	// call eth_getProof
-	accountResult, err := pr.ethGetProof(
-		pr.chain.config.IBCHandlerAddress(),
-		[]common.Hash{slot},
-		height,
+	stateProof, err := pr.chain.Client().GetStateProof(
+		pr.chain.Config().IBCHandlerAddress(),
+		[][]byte{marshaledSlot},
+		big.NewInt(height),
 	)
 	if err != nil {
 		return nil, err
 	}
-
-	// get storage proof
-	var storageProof [][]byte
-	for _, hexProof := range accountResult.StorageProof[0].Proof {
-		proof, err := hexutil.Decode(hexProof)
-		if err != nil {
-			return nil, err
-		}
-		storageProof = append(storageProof, proof)
-	}
-
-	// encode storage proof
-	rlpStorageProof, err := rlp.EncodeToBytes(storageProof)
-	if err != nil {
-		return nil, err
-	}
-
-	return rlpStorageProof, nil
+	return stateProof.StorageProofRLP[0], nil
 }
 
 type proofList struct {
