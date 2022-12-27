@@ -8,8 +8,7 @@ message ChainConfig {
   string rpc_addr = 2;
   int64 eth_chain_id = 3;
   string private_key = 4;
-  string ibc_host_address = 5;
-  string ibc_handler_address = 6;
+  string ibc_handler_address = 5;
 }
 
 message ProverConfig {

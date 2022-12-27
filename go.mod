@@ -8,7 +8,7 @@ require (
 	github.com/cosmos/ibc-go/v4 v4.0.0
 	github.com/ethereum/go-ethereum v1.10.26
 	github.com/gogo/protobuf v1.3.3
-	github.com/hyperledger-labs/yui-ibc-solidity v0.2.4
+	github.com/hyperledger-labs/yui-ibc-solidity v0.2.5-0.20221130073947-3315e5fa0f5b
 	github.com/hyperledger-labs/yui-relayer v0.3.0
 	github.com/spf13/cobra v1.5.0
 )

@@ -109,7 +109,7 @@ func (c *Chain) txCreateClient(opts *bind.TransactOpts, msg *clienttypes.MsgCrea
 	}
 	return c.ibcHandler.CreateClient(opts, ibchandler.IBCMsgsMsgCreateClient{
 		ClientType:          clientState.ClientType(),
-		Height:              pbToHandlerHeight(clientState.GetLatestHeight()),
+		Height:              pbToHeight(clientState.GetLatestHeight()),
 		ClientStateBytes:    clientStateBytes,
 		ConsensusStateBytes: consensusStateBytes,
 	})
@@ -161,8 +161,8 @@ func (c *Chain) txConnectionOpenTry(opts *bind.TransactOpts, msg *conntypes.MsgC
 		ProofInit:            msg.ProofInit,
 		ProofClient:          msg.ProofClient,
 		ProofConsensus:       msg.ProofConsensus,
-		ProofHeight:          pbToHandlerHeight(msg.ProofHeight),
-		ConsensusHeight:      pbToHandlerHeight(msg.ConsensusHeight),
+		ProofHeight:          pbToHeight(msg.ProofHeight),
+		ConsensusHeight:      pbToHeight(msg.ConsensusHeight),
 	})
 }
 
@@ -182,8 +182,8 @@ func (c *Chain) txConnectionOpenAck(opts *bind.TransactOpts, msg *conntypes.MsgC
 		ProofTry:                 msg.ProofTry,
 		ProofClient:              msg.ProofClient,
 		ProofConsensus:           msg.ProofConsensus,
-		ProofHeight:              pbToHandlerHeight(msg.ProofHeight),
-		ConsensusHeight:          pbToHandlerHeight(msg.ConsensusHeight),
+		ProofHeight:              pbToHeight(msg.ProofHeight),
+		ConsensusHeight:          pbToHeight(msg.ConsensusHeight),
 	})
 }
 
@@ -191,7 +191,7 @@ func (c *Chain) txConnectionOpenConfirm(opts *bind.TransactOpts, msg *conntypes.
 	return c.ibcHandler.ConnectionOpenConfirm(opts, ibchandler.IBCMsgsMsgConnectionOpenConfirm{
 		ConnectionId: msg.ConnectionId,
 		ProofAck:     msg.ProofAck,
-		ProofHeight:  pbToHandlerHeight(msg.ProofHeight),
+		ProofHeight:  pbToHeight(msg.ProofHeight),
 	})
 }
 
@@ -221,7 +221,7 @@ func (c *Chain) txChannelOpenTry(opts *bind.TransactOpts, msg *chantypes.MsgChan
 		},
 		CounterpartyVersion: msg.CounterpartyVersion,
 		ProofInit:           msg.ProofInit,
-		ProofHeight:         pbToHandlerHeight(msg.ProofHeight),
+		ProofHeight:         pbToHeight(msg.ProofHeight),
 	})
 }
 
@@ -232,7 +232,7 @@ func (c *Chain) txChannelOpenAck(opts *bind.TransactOpts, msg *chantypes.MsgChan
 		CounterpartyVersion:   msg.CounterpartyVersion,
 		CounterpartyChannelId: msg.CounterpartyChannelId,
 		ProofTry:              msg.ProofTry,
-		ProofHeight:           pbToHandlerHeight(msg.ProofHeight),
+		ProofHeight:           pbToHeight(msg.ProofHeight),
 	})
 }
 
@@ -241,7 +241,7 @@ func (c *Chain) txChannelOpenConfirm(opts *bind.TransactOpts, msg *chantypes.Msg
 		PortId:      msg.PortId,
 		ChannelId:   msg.ChannelId,
 		ProofAck:    msg.ProofAck,
-		ProofHeight: pbToHandlerHeight(msg.ProofHeight),
+		ProofHeight: pbToHeight(msg.ProofHeight),
 	})
 }
 
@@ -258,7 +258,7 @@ func (c *Chain) txRecvPacket(opts *bind.TransactOpts, msg *chantypes.MsgRecvPack
 			TimeoutTimestamp:   msg.Packet.TimeoutTimestamp,
 		},
 		Proof:       msg.ProofCommitment,
-		ProofHeight: pbToHandlerHeight(msg.ProofHeight),
+		ProofHeight: pbToHeight(msg.ProofHeight),
 	})
 }
 
@@ -276,6 +276,6 @@ func (c *Chain) txAcknowledgement(opts *bind.TransactOpts, msg *chantypes.MsgAck
 		},
 		Acknowledgement: msg.Acknowledgement,
 		Proof:           msg.ProofAcked,
-		ProofHeight:     pbToHandlerHeight(msg.ProofHeight),
+		ProofHeight:     pbToHeight(msg.ProofHeight),
 	})
 }

@@ -7,7 +7,6 @@ import (
 	committypes "github.com/cosmos/ibc-go/v4/modules/core/23-commitment/types"
 	"github.com/cosmos/ibc-go/v4/modules/core/exported"
 	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/contract/ibchandler"
-	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/contract/ibchost"
 )
 
 func ethHeightToPB(height int64) clienttypes.Height {
@@ -15,7 +14,7 @@ func ethHeightToPB(height int64) clienttypes.Height {
 
 }
 
-func connectionEndToPB(conn ibchost.ConnectionEndData) conntypes.ConnectionEnd {
+func connectionEndToPB(conn ibchandler.ConnectionEndData) conntypes.ConnectionEnd {
 	connpb := conntypes.ConnectionEnd{
 		ClientId:    conn.ClientId,
 		Versions:    []*conntypes.Version{},
@@ -34,7 +33,7 @@ func connectionEndToPB(conn ibchost.ConnectionEndData) conntypes.ConnectionEnd {
 	return connpb
 }
 
-func channelToPB(chann ibchost.ChannelData) chantypes.Channel {
+func channelToPB(chann ibchandler.ChannelData) chantypes.Channel {
 	return chantypes.Channel{
 		State:          chantypes.State(chann.State),
 		Ordering:       chantypes.Order(chann.Ordering),
@@ -44,14 +43,7 @@ func channelToPB(chann ibchost.ChannelData) chantypes.Channel {
 	}
 }
 
-func pbToHostHeight(height exported.Height) ibchost.HeightData {
-	return ibchost.HeightData{
-		RevisionNumber: height.GetRevisionNumber(),
-		RevisionHeight: height.GetRevisionHeight(),
-	}
-}
-
-func pbToHandlerHeight(height exported.Height) ibchandler.HeightData {
+func pbToHeight(height exported.Height) ibchandler.HeightData {
 	return ibchandler.HeightData{
 		RevisionNumber: height.GetRevisionNumber(),
 		RevisionHeight: height.GetRevisionHeight(),

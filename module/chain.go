@@ -12,7 +12,6 @@ import (
 	"github.com/ethereum/go-ethereum/ethclient"
 	"github.com/ethereum/go-ethereum/rpc"
 	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/contract/ibchandler"
-	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/contract/ibchost"
 	"github.com/hyperledger-labs/yui-relayer/core"
 )
 
@@ -23,7 +22,6 @@ type Chain struct {
 	ethClient  *ethclient.Client
 	ethChainID *big.Int
 	privateKey *ecdsa.PrivateKey
-	ibcHost    *ibchost.Ibchost
 	ibcHandler *ibchandler.Ibchandler
 
 	homePath         string
@@ -53,11 +51,6 @@ func NewChain(config ChainConfig) (*Chain, error) {
 		return nil, err
 	}
 
-	ibcHost, err := ibchost.NewIbchost(config.IBCHostAddress(), ethClient)
-	if err != nil {
-		return nil, err
-	}
-
 	ibcHandler, err := ibchandler.NewIbchandler(config.IBCHandlerAddress(), ethClient)
 	if err != nil {
 		return nil, err
@@ -69,7 +62,6 @@ func NewChain(config ChainConfig) (*Chain, error) {
 		ethClient:  ethClient,
 		ethChainID: ethChainID,
 		privateKey: privateKey,
-		ibcHost:    ibcHost,
 		ibcHandler: ibcHandler,
 	}, nil
 }

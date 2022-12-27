@@ -38,7 +38,7 @@ func (pr *Prover) ethGetProof(address common.Address, storageKeys []common.Hash,
 func (pr *Prover) getAccountProof(height int64) ([]byte, error) {
 	// call eth_getProof
 	accountResult, err := pr.ethGetProof(
-		pr.chain.config.IBCHostAddress(),
+		pr.chain.config.IBCHandlerAddress(),
 		nil,
 		height,
 	)
@@ -74,7 +74,7 @@ func (pr *Prover) getStateCommitmentProof(path []byte, height int64) ([]byte, er
 
 	// call eth_getProof
 	accountResult, err := pr.ethGetProof(
-		pr.chain.config.IBCHostAddress(),
+		pr.chain.config.IBCHandlerAddress(),
 		[]common.Hash{slot},
 		height,
 	)

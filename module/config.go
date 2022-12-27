@@ -22,10 +22,6 @@ func (c ProverConfig) Build(chain core.ChainI) (core.ProverI, error) {
 	return NewProver(chain_, c), nil
 }
 
-func (c ChainConfig) IBCHostAddress() common.Address {
-	return common.HexToAddress(c.IbcHostAddress)
-}
-
 func (c ChainConfig) IBCHandlerAddress() common.Address {
 	return common.HexToAddress(c.IbcHandlerAddress)
 }

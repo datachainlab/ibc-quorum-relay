@@ -109,7 +109,7 @@ func (pr *Prover) CreateMsgCreateClient(clientID string, dstHeader core.HeaderI,
 	// recover account data from account proof
 	rlpAccount, err := verifyProof(
 		ethHeader.Root,
-		crypto.Keccak256Hash(pr.chain.config.IBCHostAddress().Bytes()).Bytes(),
+		crypto.Keccak256Hash(pr.chain.config.IBCHandlerAddress().Bytes()).Bytes(),
 		accountProof,
 	)
 	var account state.Account
@@ -135,7 +135,7 @@ func (pr *Prover) CreateMsgCreateClient(clientID string, dstHeader core.HeaderI,
 		ChainId:               int32(pr.chain.ethChainID.Int64()),
 		LatestHeight:          int32(ethHeader.Number.Int64()),
 		Frozen:                0,
-		IbcStoreAddress:       pr.chain.config.IBCHostAddress().Bytes(),
+		IbcStoreAddress:       pr.chain.config.IBCHandlerAddress().Bytes(),
 	}
 	anyClientState, err := codectypes.NewAnyWithValue(&clientState)
 	if err != nil {
