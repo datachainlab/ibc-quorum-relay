@@ -4,6 +4,7 @@ import (
 	fmt "fmt"
 	"testing"
 
+	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
 	mocktypes "github.com/datachainlab/ibc-mock-client/modules/light-clients/xx-mock/types"
 	"github.com/datachainlab/ibc-quorum-relay/module"
 	"github.com/hyperledger-labs/yui-relayer/core"
@@ -50,17 +51,29 @@ func makeChain() (*module.Chain, error) {
 }
 
 func TestChain(t *testing.T) {
+	// instantiate a chain module
 	chain, err := makeChain()
 	if err != nil {
 		t.Fatalf("makeChain failed: %v", err)
 	}
 
+	// get height used for testing
 	bn, err := chain.GetLatestHeight()
 	if err != nil {
 		t.Fatalf("chain.GetLatestHeight failed: %v", err)
 	}
-	if _, err := chain.QueryClientState(bn); err != nil {
+
+	// test queries
+	csRes, err := chain.QueryClientState(bn)
+	if err != nil {
 		t.Fatalf("chain.QueryClientState failed: %v", err)
+	}
+	cs, err := clienttypes.UnpackClientState(csRes.ClientState)
+	if err != nil {
+		t.Fatalf("clienttypes.UnpackClientState failed: %v", err)
+	}
+	if _, err := chain.QueryClientConsensusState(bn, cs.GetLatestHeight()); err != nil {
+		t.Fatalf("chain.QueryClientConsensusState failed: %v", err)
 	}
 	if _, err := chain.QueryConnection(bn); err != nil {
 		t.Fatalf("chain.QueryConnection failed: %v", err)
@@ -68,9 +81,16 @@ func TestChain(t *testing.T) {
 	if _, err := chain.QueryChannel(bn); err != nil {
 		t.Fatalf("chain.QueryChannel failed: %v", err)
 	}
+	if _, err := chain.QueryPacketCommitment(bn, 1); err != nil {
+		t.Fatalf("chain.QueryPacketCommitment failed: %v", err)
+	}
+	if _, err := chain.QueryPacketAcknowledgementCommitment(bn, 1); err != nil {
+		t.Fatalf("prover.QueryPacketAcknowledgementCommitment failed: %v", err)
+	}
 }
 
 func TestProver(t *testing.T) {
+	// instantiate a prover module
 	chain, err := makeChain()
 	if err != nil {
 		t.Fatalf("makeChain failed: %v", err)
@@ -80,20 +100,38 @@ func TestProver(t *testing.T) {
 		TrustLevelDenominator: 0,
 		TrustingPeriod:        0,
 	})
-	if _, err := prover.QueryLatestHeader(); err != nil {
-		t.Fatalf("prover.QueryLatestHeader failed: %v", err)
-	}
+
+	// get height used for testing
 	bn, err := prover.GetLatestLightHeight()
 	if err != nil {
 		t.Fatalf("prover.GetLatestLightHeight failed: %v", err)
 	}
-	if _, err := prover.QueryClientStateWithProof(bn); err != nil {
+
+	// test queries
+	if _, err := prover.QueryLatestHeader(); err != nil {
+		t.Fatalf("prover.QueryLatestHeader failed: %v", err)
+	}
+	csRes, err := prover.QueryClientStateWithProof(bn)
+	if err != nil {
 		t.Fatalf("prover.QueryClientStateWithProof failed: %v", err)
+	}
+	cs, err := clienttypes.UnpackClientState(csRes.ClientState)
+	if err != nil {
+		t.Fatalf("clienttypes.UnpackClientState failed: %v", err)
+	}
+	if _, err := prover.QueryClientConsensusStateWithProof(bn, cs.GetLatestHeight()); err != nil {
+		t.Fatalf("prover.QueryClientConsensusStateWithProof failed: %v", err)
 	}
 	if _, err := prover.QueryConnectionWithProof(bn); err != nil {
 		t.Fatalf("prover.QueryConnectionWithProof failed: %v", err)
 	}
 	if _, err := prover.QueryChannelWithProof(bn); err != nil {
 		t.Fatalf("prover.QueryChannelWithProof failed: %v", err)
+	}
+	if _, err := prover.QueryPacketCommitmentWithProof(bn, 1); err != nil {
+		t.Fatalf("prover.QueryPacketCommitmentWithProof failed: %v", err)
+	}
+	if _, err := prover.QueryPacketAcknowledgementCommitmentWithProof(bn, 1); err != nil {
+		t.Fatalf("prover.QueryPacketAcknowledgementCommitmentWithProof failed: %v", err)
 	}
 }
