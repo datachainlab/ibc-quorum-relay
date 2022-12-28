@@ -22,82 +22,6 @@ var _ = math.Inf
 // proto package needs to be updated.
 const _ = proto.GoGoProtoPackageIsVersion3 // please upgrade the proto package
 
-type ChainConfig struct {
-	ChainId           string `protobuf:"bytes,1,opt,name=chain_id,json=chainId,proto3" json:"chain_id,omitempty"`
-	RpcAddr           string `protobuf:"bytes,2,opt,name=rpc_addr,json=rpcAddr,proto3" json:"rpc_addr,omitempty"`
-	EthChainId        int64  `protobuf:"varint,3,opt,name=eth_chain_id,json=ethChainId,proto3" json:"eth_chain_id,omitempty"`
-	PrivateKey        string `protobuf:"bytes,4,opt,name=private_key,json=privateKey,proto3" json:"private_key,omitempty"`
-	IbcHandlerAddress string `protobuf:"bytes,5,opt,name=ibc_handler_address,json=ibcHandlerAddress,proto3" json:"ibc_handler_address,omitempty"`
-}
-
-func (m *ChainConfig) Reset()         { *m = ChainConfig{} }
-func (m *ChainConfig) String() string { return proto.CompactTextString(m) }
-func (*ChainConfig) ProtoMessage()    {}
-func (*ChainConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22c9906801a6a849, []int{0}
-}
-func (m *ChainConfig) XXX_Unmarshal(b []byte) error {
-	return m.Unmarshal(b)
-}
-func (m *ChainConfig) XXX_Marshal(b []byte, deterministic bool) ([]byte, error) {
-	if deterministic {
-		return xxx_messageInfo_ChainConfig.Marshal(b, m, deterministic)
-	} else {
-		b = b[:cap(b)]
-		n, err := m.MarshalToSizedBuffer(b)
-		if err != nil {
-			return nil, err
-		}
-		return b[:n], nil
-	}
-}
-func (m *ChainConfig) XXX_Merge(src proto.Message) {
-	xxx_messageInfo_ChainConfig.Merge(m, src)
-}
-func (m *ChainConfig) XXX_Size() int {
-	return m.Size()
-}
-func (m *ChainConfig) XXX_DiscardUnknown() {
-	xxx_messageInfo_ChainConfig.DiscardUnknown(m)
-}
-
-var xxx_messageInfo_ChainConfig proto.InternalMessageInfo
-
-func (m *ChainConfig) GetChainId() string {
-	if m != nil {
-		return m.ChainId
-	}
-	return ""
-}
-
-func (m *ChainConfig) GetRpcAddr() string {
-	if m != nil {
-		return m.RpcAddr
-	}
-	return ""
-}
-
-func (m *ChainConfig) GetEthChainId() int64 {
-	if m != nil {
-		return m.EthChainId
-	}
-	return 0
-}
-
-func (m *ChainConfig) GetPrivateKey() string {
-	if m != nil {
-		return m.PrivateKey
-	}
-	return ""
-}
-
-func (m *ChainConfig) GetIbcHandlerAddress() string {
-	if m != nil {
-		return m.IbcHandlerAddress
-	}
-	return ""
-}
-
 type ProverConfig struct {
 	TrustLevelNumerator   uint32 `protobuf:"varint,1,opt,name=trust_level_numerator,json=trustLevelNumerator,proto3" json:"trust_level_numerator,omitempty"`
 	TrustLevelDenominator uint32 `protobuf:"varint,2,opt,name=trust_level_denominator,json=trustLevelDenominator,proto3" json:"trust_level_denominator,omitempty"`
@@ -108,7 +32,7 @@ func (m *ProverConfig) Reset()         { *m = ProverConfig{} }
 func (m *ProverConfig) String() string { return proto.CompactTextString(m) }
 func (*ProverConfig) ProtoMessage()    {}
 func (*ProverConfig) Descriptor() ([]byte, []int) {
-	return fileDescriptor_22c9906801a6a849, []int{1}
+	return fileDescriptor_22c9906801a6a849, []int{0}
 }
 func (m *ProverConfig) XXX_Unmarshal(b []byte) error {
 	return m.Unmarshal(b)
@@ -159,7 +83,6 @@ func (m *ProverConfig) GetTrustingPeriod() uint64 {
 }
 
 func init() {
-	proto.RegisterType((*ChainConfig)(nil), "relayer.chains.quorum.config.ChainConfig")
 	proto.RegisterType((*ProverConfig)(nil), "relayer.chains.quorum.config.ProverConfig")
 }
 
@@ -168,86 +91,23 @@ func init() {
 }
 
 var fileDescriptor_22c9906801a6a849 = []byte{
-	// 363 bytes of a gzipped FileDescriptorProto
-	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0x4c, 0x91, 0xcf, 0x6e, 0xda, 0x40,
-	0x10, 0x87, 0x59, 0xa0, 0xff, 0x16, 0xda, 0xaa, 0x46, 0xa8, 0xae, 0x54, 0xb9, 0x88, 0x4b, 0xe9,
-	0x01, 0x5b, 0x6a, 0xa5, 0xde, 0x29, 0x3d, 0x14, 0x35, 0x8a, 0x90, 0x8f, 0xb9, 0xac, 0xd6, 0xbb,
-	0x13, 0xbc, 0x8a, 0xed, 0x75, 0xc6, 0x6b, 0x24, 0xde, 0x22, 0xef, 0x90, 0x77, 0xc8, 0x33, 0xe4,
-	0xc8, 0x31, 0xc7, 0x08, 0x5e, 0x24, 0x62, 0xd7, 0x84, 0x9c, 0x56, 0x33, 0xdf, 0xef, 0xd3, 0xee,
-	0xec, 0xd0, 0x1f, 0x08, 0x19, 0xdf, 0x00, 0x46, 0x22, 0xe5, 0xaa, 0xa8, 0xa2, 0xeb, 0x5a, 0x63,
-	0x9d, 0x47, 0x42, 0x17, 0x97, 0x6a, 0xd5, 0x1c, 0x61, 0x89, 0xda, 0x68, 0xef, 0x6b, 0x13, 0x0d,
-	0x5d, 0x34, 0x74, 0xd1, 0xd0, 0x65, 0xc6, 0x77, 0x84, 0xf6, 0xe6, 0x07, 0x30, 0xb7, 0xb5, 0xf7,
-	0x85, 0xbe, 0xb5, 0x39, 0xa6, 0xa4, 0x4f, 0x46, 0x64, 0xf2, 0x2e, 0x7e, 0x63, 0xeb, 0x85, 0x3c,
-	0x20, 0x2c, 0x05, 0xe3, 0x52, 0xa2, 0xdf, 0x76, 0x08, 0x4b, 0x31, 0x93, 0x12, 0xbd, 0x11, 0xed,
-	0x83, 0x49, 0xd9, 0xb3, 0xd9, 0x19, 0x91, 0x49, 0x27, 0xa6, 0x60, 0xd2, 0x79, 0x23, 0x7f, 0xa3,
-	0xbd, 0x12, 0xd5, 0x9a, 0x1b, 0x60, 0x57, 0xb0, 0xf1, 0xbb, 0xd6, 0xa7, 0x4d, 0xeb, 0x3f, 0x6c,
-	0xbc, 0x90, 0x0e, 0x54, 0x22, 0x58, 0xca, 0x0b, 0x99, 0x01, 0xda, 0x5b, 0xa0, 0xaa, 0xfc, 0x57,
-	0x36, 0xf8, 0x49, 0x25, 0xe2, 0x9f, 0x23, 0x33, 0x07, 0xc6, 0xb7, 0x84, 0xf6, 0x97, 0xa8, 0xd7,
-	0x80, 0xcd, 0xcb, 0x7f, 0xd2, 0xa1, 0xc1, 0xba, 0x32, 0x2c, 0x83, 0x35, 0x64, 0xac, 0xa8, 0x73,
-	0x40, 0x6e, 0x34, 0xda, 0x31, 0xde, 0xc7, 0x03, 0x0b, 0xcf, 0x0e, 0xec, 0xfc, 0x88, 0xbc, 0xdf,
-	0xf4, 0xf3, 0x4b, 0x47, 0x42, 0xa1, 0x73, 0x55, 0x58, 0xab, 0x6d, 0xad, 0xe1, 0xc9, 0xfa, 0x7b,
-	0x82, 0xde, 0x77, 0xfa, 0xd1, 0x02, 0x55, 0xac, 0x58, 0x09, 0xa8, 0xb4, 0x1b, 0xb9, 0x1b, 0x7f,
-	0x38, 0xb6, 0x97, 0xb6, 0xfb, 0x67, 0x71, 0xbf, 0x0b, 0xc8, 0x76, 0x17, 0x90, 0xc7, 0x5d, 0x40,
-	0x6e, 0xf6, 0x41, 0x6b, 0xbb, 0x0f, 0x5a, 0x0f, 0xfb, 0xa0, 0x75, 0x11, 0xad, 0x94, 0x49, 0xeb,
-	0x24, 0x14, 0x3a, 0x8f, 0x24, 0x37, 0xdc, 0xfe, 0x5d, 0xc6, 0x93, 0x48, 0x25, 0x62, 0xea, 0x76,
-	0x34, 0xb5, 0x9b, 0x8b, 0x72, 0x2d, 0xeb, 0x0c, 0x92, 0xd7, 0x76, 0x9d, 0xbf, 0x9e, 0x02, 0x00,
-	0x00, 0xff, 0xff, 0xd6, 0x0b, 0x28, 0x07, 0xfb, 0x01, 0x00, 0x00,
-}
-
-func (m *ChainConfig) Marshal() (dAtA []byte, err error) {
-	size := m.Size()
-	dAtA = make([]byte, size)
-	n, err := m.MarshalToSizedBuffer(dAtA[:size])
-	if err != nil {
-		return nil, err
-	}
-	return dAtA[:n], nil
-}
-
-func (m *ChainConfig) MarshalTo(dAtA []byte) (int, error) {
-	size := m.Size()
-	return m.MarshalToSizedBuffer(dAtA[:size])
-}
-
-func (m *ChainConfig) MarshalToSizedBuffer(dAtA []byte) (int, error) {
-	i := len(dAtA)
-	_ = i
-	var l int
-	_ = l
-	if len(m.IbcHandlerAddress) > 0 {
-		i -= len(m.IbcHandlerAddress)
-		copy(dAtA[i:], m.IbcHandlerAddress)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.IbcHandlerAddress)))
-		i--
-		dAtA[i] = 0x2a
-	}
-	if len(m.PrivateKey) > 0 {
-		i -= len(m.PrivateKey)
-		copy(dAtA[i:], m.PrivateKey)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.PrivateKey)))
-		i--
-		dAtA[i] = 0x22
-	}
-	if m.EthChainId != 0 {
-		i = encodeVarintConfig(dAtA, i, uint64(m.EthChainId))
-		i--
-		dAtA[i] = 0x18
-	}
-	if len(m.RpcAddr) > 0 {
-		i -= len(m.RpcAddr)
-		copy(dAtA[i:], m.RpcAddr)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.RpcAddr)))
-		i--
-		dAtA[i] = 0x12
-	}
-	if len(m.ChainId) > 0 {
-		i -= len(m.ChainId)
-		copy(dAtA[i:], m.ChainId)
-		i = encodeVarintConfig(dAtA, i, uint64(len(m.ChainId)))
-		i--
-		dAtA[i] = 0xa
-	}
-	return len(dAtA) - i, nil
+	// 255 bytes of a gzipped FileDescriptorProto
+	0x1f, 0x8b, 0x08, 0x00, 0x00, 0x00, 0x00, 0x00, 0x02, 0xff, 0xe2, 0xd2, 0x2c, 0x4a, 0xcd, 0x49,
+	0xac, 0x4c, 0x2d, 0xd2, 0x4f, 0xce, 0x48, 0xcc, 0xcc, 0x2b, 0xd6, 0x2f, 0x2c, 0xcd, 0x2f, 0x2a,
+	0xcd, 0xd5, 0x4f, 0xce, 0xcf, 0x4b, 0xcb, 0x4c, 0x87, 0x52, 0x7a, 0x05, 0x45, 0xf9, 0x25, 0xf9,
+	0x42, 0x32, 0x50, 0xa5, 0x7a, 0x10, 0xa5, 0x7a, 0x10, 0xa5, 0x7a, 0x10, 0x35, 0x4a, 0x8b, 0x19,
+	0xb9, 0x78, 0x02, 0x8a, 0xf2, 0xcb, 0x52, 0x8b, 0x9c, 0xc1, 0x02, 0x42, 0x46, 0x5c, 0xa2, 0x25,
+	0x45, 0xa5, 0xc5, 0x25, 0xf1, 0x39, 0xa9, 0x65, 0xa9, 0x39, 0xf1, 0x79, 0xa5, 0xb9, 0xa9, 0x45,
+	0x89, 0x25, 0xf9, 0x45, 0x12, 0x8c, 0x0a, 0x8c, 0x1a, 0xbc, 0x41, 0xc2, 0x60, 0x49, 0x1f, 0x90,
+	0x9c, 0x1f, 0x4c, 0x4a, 0xc8, 0x8c, 0x4b, 0x1c, 0x59, 0x4f, 0x4a, 0x6a, 0x5e, 0x7e, 0x6e, 0x66,
+	0x1e, 0x58, 0x17, 0x13, 0x58, 0x97, 0x28, 0x42, 0x97, 0x0b, 0x42, 0x52, 0x48, 0x9d, 0x8b, 0x1f,
+	0x2c, 0x91, 0x99, 0x97, 0x1e, 0x5f, 0x90, 0x5a, 0x94, 0x99, 0x9f, 0x22, 0xc1, 0xac, 0xc0, 0xa8,
+	0xc1, 0x12, 0xc4, 0x07, 0x13, 0x0e, 0x00, 0x8b, 0x3a, 0x79, 0x9e, 0x78, 0x24, 0xc7, 0x78, 0xe1,
+	0x91, 0x1c, 0xe3, 0x83, 0x47, 0x72, 0x8c, 0x13, 0x1e, 0xcb, 0x31, 0x5c, 0x78, 0x2c, 0xc7, 0x70,
+	0xe3, 0xb1, 0x1c, 0x43, 0x94, 0x7e, 0x7a, 0x66, 0x49, 0x46, 0x69, 0x92, 0x5e, 0x72, 0x7e, 0xae,
+	0x7e, 0x4a, 0x62, 0x49, 0x22, 0xd8, 0x93, 0x39, 0x89, 0x49, 0xfa, 0x99, 0x49, 0xc9, 0xba, 0x10,
+	0xaf, 0xea, 0x82, 0x03, 0x40, 0x3f, 0x37, 0x3f, 0xa5, 0x34, 0x27, 0x35, 0x89, 0x0d, 0x1c, 0x2a,
+	0xc6, 0x80, 0x00, 0x00, 0x00, 0xff, 0xff, 0xb6, 0x3d, 0xe5, 0x44, 0x42, 0x01, 0x00, 0x00,
 }
 
 func (m *ProverConfig) Marshal() (dAtA []byte, err error) {
@@ -299,34 +159,6 @@ func encodeVarintConfig(dAtA []byte, offset int, v uint64) int {
 	dAtA[offset] = uint8(v)
 	return base
 }
-func (m *ChainConfig) Size() (n int) {
-	if m == nil {
-		return 0
-	}
-	var l int
-	_ = l
-	l = len(m.ChainId)
-	if l > 0 {
-		n += 1 + l + sovConfig(uint64(l))
-	}
-	l = len(m.RpcAddr)
-	if l > 0 {
-		n += 1 + l + sovConfig(uint64(l))
-	}
-	if m.EthChainId != 0 {
-		n += 1 + sovConfig(uint64(m.EthChainId))
-	}
-	l = len(m.PrivateKey)
-	if l > 0 {
-		n += 1 + l + sovConfig(uint64(l))
-	}
-	l = len(m.IbcHandlerAddress)
-	if l > 0 {
-		n += 1 + l + sovConfig(uint64(l))
-	}
-	return n
-}
-
 func (m *ProverConfig) Size() (n int) {
 	if m == nil {
 		return 0
@@ -350,203 +182,6 @@ func sovConfig(x uint64) (n int) {
 }
 func sozConfig(x uint64) (n int) {
 	return sovConfig(uint64((x << 1) ^ uint64((int64(x) >> 63))))
-}
-func (m *ChainConfig) Unmarshal(dAtA []byte) error {
-	l := len(dAtA)
-	iNdEx := 0
-	for iNdEx < l {
-		preIndex := iNdEx
-		var wire uint64
-		for shift := uint(0); ; shift += 7 {
-			if shift >= 64 {
-				return ErrIntOverflowConfig
-			}
-			if iNdEx >= l {
-				return io.ErrUnexpectedEOF
-			}
-			b := dAtA[iNdEx]
-			iNdEx++
-			wire |= uint64(b&0x7F) << shift
-			if b < 0x80 {
-				break
-			}
-		}
-		fieldNum := int32(wire >> 3)
-		wireType := int(wire & 0x7)
-		if wireType == 4 {
-			return fmt.Errorf("proto: ChainConfig: wiretype end group for non-group")
-		}
-		if fieldNum <= 0 {
-			return fmt.Errorf("proto: ChainConfig: illegal tag %d (wire type %d)", fieldNum, wire)
-		}
-		switch fieldNum {
-		case 1:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field ChainId", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthConfig
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthConfig
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.ChainId = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 2:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field RpcAddr", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthConfig
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthConfig
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.RpcAddr = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 3:
-			if wireType != 0 {
-				return fmt.Errorf("proto: wrong wireType = %d for field EthChainId", wireType)
-			}
-			m.EthChainId = 0
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				m.EthChainId |= int64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-		case 4:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field PrivateKey", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthConfig
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthConfig
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.PrivateKey = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		case 5:
-			if wireType != 2 {
-				return fmt.Errorf("proto: wrong wireType = %d for field IbcHandlerAddress", wireType)
-			}
-			var stringLen uint64
-			for shift := uint(0); ; shift += 7 {
-				if shift >= 64 {
-					return ErrIntOverflowConfig
-				}
-				if iNdEx >= l {
-					return io.ErrUnexpectedEOF
-				}
-				b := dAtA[iNdEx]
-				iNdEx++
-				stringLen |= uint64(b&0x7F) << shift
-				if b < 0x80 {
-					break
-				}
-			}
-			intStringLen := int(stringLen)
-			if intStringLen < 0 {
-				return ErrInvalidLengthConfig
-			}
-			postIndex := iNdEx + intStringLen
-			if postIndex < 0 {
-				return ErrInvalidLengthConfig
-			}
-			if postIndex > l {
-				return io.ErrUnexpectedEOF
-			}
-			m.IbcHandlerAddress = string(dAtA[iNdEx:postIndex])
-			iNdEx = postIndex
-		default:
-			iNdEx = preIndex
-			skippy, err := skipConfig(dAtA[iNdEx:])
-			if err != nil {
-				return err
-			}
-			if (skippy < 0) || (iNdEx+skippy) < 0 {
-				return ErrInvalidLengthConfig
-			}
-			if (iNdEx + skippy) > l {
-				return io.ErrUnexpectedEOF
-			}
-			iNdEx += skippy
-		}
-	}
-
-	if iNdEx > l {
-		return io.ErrUnexpectedEOF
-	}
-	return nil
 }
 func (m *ProverConfig) Unmarshal(dAtA []byte) error {
 	l := len(dAtA)

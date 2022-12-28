@@ -16,7 +16,7 @@ const (
 	hdwPath     = "m/44'/60'/0'/0/0"
 
 	// contract address changes for each deployment
-	ibcHandlerAddress = "0x6468751F5D94540338058254D8F9BD1AcEa498Fe"
+	ibcHandlerAddress = "0xaa43d337145E8930d01cb4E60Abf6595C692921E"
 )
 
 func makeChain() (*ethereum.Chain, error) {
@@ -52,47 +52,6 @@ func makeChain() (*ethereum.Chain, error) {
 
 	return chain, nil
 }
-
-/*
-func TestChain(t *testing.T) {
-	// instantiate a chain module
-	chain, err := makeChain()
-	if err != nil {
-		t.Fatalf("makeChain failed: %v", err)
-	}
-
-	// get height used for testing
-	bn, err := chain.GetLatestHeight()
-	if err != nil {
-		t.Fatalf("chain.GetLatestHeight failed: %v", err)
-	}
-
-	// test queries
-	csRes, err := chain.QueryClientState(bn)
-	if err != nil {
-		t.Fatalf("chain.QueryClientState failed: %v", err)
-	}
-	cs, err := clienttypes.UnpackClientState(csRes.ClientState)
-	if err != nil {
-		t.Fatalf("clienttypes.UnpackClientState failed: %v", err)
-	}
-	if _, err := chain.QueryClientConsensusState(bn, cs.GetLatestHeight()); err != nil {
-		t.Fatalf("chain.QueryClientConsensusState failed: %v", err)
-	}
-	if _, err := chain.QueryConnection(bn); err != nil {
-		t.Fatalf("chain.QueryConnection failed: %v", err)
-	}
-	if _, err := chain.QueryChannel(bn); err != nil {
-		t.Fatalf("chain.QueryChannel failed: %v", err)
-	}
-	if _, err := chain.QueryPacketCommitment(bn, 1); err != nil {
-		t.Fatalf("chain.QueryPacketCommitment failed: %v", err)
-	}
-	if _, err := chain.QueryPacketAcknowledgementCommitment(bn, 1); err != nil {
-		t.Fatalf("prover.QueryPacketAcknowledgementCommitment failed: %v", err)
-	}
-}
-*/
 
 func TestProver(t *testing.T) {
 	// instantiate a prover module

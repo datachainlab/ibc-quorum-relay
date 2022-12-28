@@ -3,7 +3,6 @@ module github.com/datachainlab/ibc-quorum-relay
 go 1.19
 
 require (
-	github.com/avast/retry-go v3.0.0+incompatible
 	github.com/cosmos/cosmos-sdk v0.45.7
 	github.com/cosmos/ibc-go/v4 v4.0.0
 	github.com/datachainlab/ibc-mock-client v0.2.1
@@ -24,6 +23,7 @@ require (
 	github.com/StackExchange/wmi v1.2.1 // indirect
 	github.com/VictoriaMetrics/fastcache v1.5.7 // indirect
 	github.com/armon/go-metrics v0.4.0 // indirect
+	github.com/avast/retry-go v3.0.0+incompatible // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bgentry/speakeasy v0.1.0 // indirect
 	github.com/btcsuite/btcd v0.22.1 // indirect

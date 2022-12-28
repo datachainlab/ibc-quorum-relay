@@ -3,14 +3,6 @@ package relayer.chains.quorum.config;
 
 option go_package = "github.com/datachainlab/ibc-quorum-relay/module";
 
-message ChainConfig {
-  string chain_id = 1;
-  string rpc_addr = 2;
-  int64 eth_chain_id = 3;
-  string private_key = 4;
-  string ibc_handler_address = 5;
-}
-
 message ProverConfig {
   uint32 trust_level_numerator = 1;
   uint32 trust_level_denominator = 2;
