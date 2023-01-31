@@ -44,9 +44,17 @@ func (h *Header) decodeEthHeader() (*types.Header, error) {
 }
 
 func (h *Header) decodeAccountProof() ([][]byte, error) {
-	var accountProof [][]byte
-	if err := rlp.DecodeBytes(h.AccountProof, &accountProof); err != nil {
+	var decodedProof [][][]byte
+	if err := rlp.DecodeBytes(h.AccountProof, &decodedProof); err != nil {
 		return nil, err
+	}
+	var accountProof [][]byte
+	for i := range decodedProof {
+		b, err := rlp.EncodeToBytes(decodedProof[i])
+		if err != nil {
+			return nil, err
+		}
+		accountProof = append(accountProof, b)
 	}
 	return accountProof, nil
 }
