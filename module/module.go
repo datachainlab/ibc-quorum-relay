@@ -2,6 +2,7 @@ package module
 
 import (
 	codectypes "github.com/cosmos/cosmos-sdk/codec/types"
+	"github.com/cosmos/ibc-go/v4/modules/core/exported"
 	"github.com/hyperledger-labs/yui-relayer/config"
 	"github.com/hyperledger-labs/yui-relayer/core"
 	"github.com/spf13/cobra"
@@ -21,6 +22,11 @@ func (Module) RegisterInterfaces(registry codectypes.InterfaceRegistry) {
 	registry.RegisterImplementations(
 		(*core.ProverConfigI)(nil),
 		&ProverConfig{},
+	)
+
+	registry.RegisterImplementations(
+		(*exported.ClientState)(nil),
+		&ClientState{},
 	)
 }
 
