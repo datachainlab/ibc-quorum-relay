@@ -3,7 +3,11 @@ package ibc.lightclients.qbft.v1;
 
 option go_package = "github.com/datachainlab/ibc-quorum-relay/module";
 
+import "gogoproto/gogo.proto";
+
 message ClientState {
+  option (gogoproto.goproto_getters) = false;
+
   uint32 trust_level_numerator = 1;
   uint32 trust_level_denominator = 2;
   uint64 trusting_period = 3;  // as unix time
