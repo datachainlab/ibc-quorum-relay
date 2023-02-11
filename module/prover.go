@@ -239,6 +239,10 @@ func (pr *Prover) QueryConnectionWithProof(height int64) (*conntypes.QueryConnec
 	if err != nil {
 		return nil, err
 	}
+	if res.Connection.State == conntypes.UNINITIALIZED {
+		// connection not found
+		return res, nil
+	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.ConnectionKey(
 		pr.chain.Path().ConnectionID,
@@ -254,6 +258,10 @@ func (pr *Prover) QueryChannelWithProof(height int64) (chanRes *chantypes.QueryC
 	res, err := pr.chain.QueryChannel(height)
 	if err != nil {
 		return nil, err
+	}
+	if res.Channel.State == chantypes.UNINITIALIZED {
+		// channel not found
+		return res, nil
 	}
 	res.ProofHeight = ethHeightToPB(height)
 	res.Proof, err = pr.getStateCommitmentProof(host.ChannelKey(
