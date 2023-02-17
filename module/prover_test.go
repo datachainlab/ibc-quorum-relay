@@ -1,12 +1,19 @@
-package module_test
+package module
 
 import (
+	"bytes"
 	fmt "fmt"
 	"testing"
 
 	clienttypes "github.com/cosmos/ibc-go/v4/modules/core/02-client/types"
+	host "github.com/cosmos/ibc-go/v4/modules/core/24-host"
 	mocktypes "github.com/datachainlab/ibc-mock-client/modules/light-clients/xx-mock/types"
-	"github.com/datachainlab/ibc-quorum-relay/module"
+	"github.com/ethereum/go-ethereum/common"
+	"github.com/ethereum/go-ethereum/core/state"
+	"github.com/ethereum/go-ethereum/core/types"
+	"github.com/ethereum/go-ethereum/crypto"
+	"github.com/ethereum/go-ethereum/rlp"
+	proto "github.com/gogo/protobuf/proto"
 	"github.com/hyperledger-labs/yui-ibc-solidity/pkg/relay/ethereum"
 	"github.com/hyperledger-labs/yui-relayer/core"
 )
@@ -16,7 +23,7 @@ const (
 	hdwPath     = "m/44'/60'/0'/0/0"
 
 	// contract address changes for each deployment
-	ibcHandlerAddress = "0xaa43d337145E8930d01cb4E60Abf6595C692921E"
+	ibcHandlerAddress = "0x702E40245797c5a2108A566b3CE2Bf14Bc6aF841"
 )
 
 func makeChain() (*ethereum.Chain, error) {
@@ -59,7 +66,7 @@ func TestProver(t *testing.T) {
 	if err != nil {
 		t.Fatalf("makeChain failed: %v", err)
 	}
-	prover := module.NewProver(chain, module.ProverConfig{
+	prover := NewProver(chain, ProverConfig{
 		TrustLevelNumerator:   0,
 		TrustLevelDenominator: 0,
 		TrustingPeriod:        0,
@@ -71,27 +78,153 @@ func TestProver(t *testing.T) {
 		t.Fatalf("prover.GetLatestLightHeight failed: %v", err)
 	}
 
-	// test queries
+	// test header queries
 	if _, err := prover.QueryLatestHeader(); err != nil {
 		t.Errorf("prover.QueryLatestHeader failed: %v", err)
 	}
-	if csRes, err := prover.QueryClientStateWithProof(bn); err != nil {
+	iHeader, err := prover.QueryHeader(bn)
+	if err != nil {
+		t.Errorf("prover.QueryHeader failed: %v", err)
+	}
+	header := iHeader.(*Header)
+	contractAddress := prover.chain.Config().IBCHandlerAddress()
+	storageRoot := verifyHeader(t, header, contractAddress)
+
+	// test client and consensus queries
+	if res, err := prover.QueryClientStateWithProof(bn); err != nil {
 		t.Errorf("prover.QueryClientStateWithProof failed: %v", err)
-	} else if cs, err := clienttypes.UnpackClientState(csRes.ClientState); err != nil {
-		t.Errorf("clienttypes.UnpackClientState failed: %v", err)
-	} else if _, err := prover.QueryClientConsensusStateWithProof(bn, cs.GetLatestHeight()); err != nil {
-		t.Errorf("prover.QueryClientConsensusStateWithProof failed: %v", err)
+	} else {
+		path := host.FullClientStatePath(prover.chain.Path().ClientID)
+		commitment := messageToCommitment(t, res.ClientState)
+		verifyMembership(t, storageRoot, res.Proof, path, commitment)
+		if cs, err := clienttypes.UnpackClientState(res.ClientState); err != nil {
+			t.Errorf("clienttypes.UnpackClientState failed: %v", err)
+		} else if res, err := prover.QueryClientConsensusStateWithProof(bn, cs.GetLatestHeight()); err != nil {
+			t.Errorf("prover.QueryClientConsensusStateWithProof failed: %v", err)
+		} else {
+			path := host.FullConsensusStatePath(prover.chain.Path().ClientID, cs.GetLatestHeight())
+			commitment := messageToCommitment(t, res.ConsensusState)
+			verifyMembership(t, storageRoot, res.Proof, path, commitment)
+		}
 	}
-	if _, err := prover.QueryConnectionWithProof(bn); err != nil {
+
+	// test connection query
+	if res, err := prover.QueryConnectionWithProof(bn); err != nil {
 		t.Errorf("prover.QueryConnectionWithProof failed: %v", err)
+	} else {
+		path := host.ConnectionPath(prover.chain.Path().ConnectionID)
+		commitment := messageToCommitment(t, res.Connection)
+		verifyMembership(t, storageRoot, res.Proof, path, commitment)
 	}
-	if _, err := prover.QueryChannelWithProof(bn); err != nil {
+
+	// test channel query
+	if res, err := prover.QueryChannelWithProof(bn); err != nil {
 		t.Errorf("prover.QueryChannelWithProof failed: %v", err)
+	} else {
+		path := host.ChannelPath(prover.chain.Path().PortID, prover.chain.Path().ChannelID)
+		commitment := messageToCommitment(t, res.Channel)
+		verifyMembership(t, storageRoot, res.Proof, path, commitment)
 	}
-	if _, err := prover.QueryPacketCommitmentWithProof(bn, 1); err != nil {
+
+	// test packet commitment query
+	if res, err := prover.QueryPacketCommitmentWithProof(bn, 1); err != nil {
 		t.Errorf("prover.QueryPacketCommitmentWithProof failed: %v", err)
+	} else {
+		path := host.PacketCommitmentPath(
+			prover.chain.Path().PortID,
+			prover.chain.Path().ChannelID,
+			1,
+		)
+		verifyMembership(t, storageRoot, res.Proof, path, res.Commitment)
 	}
-	if _, err := prover.QueryPacketAcknowledgementCommitmentWithProof(bn, 1); err != nil {
+
+	// test ack commitment query
+	if res, err := prover.QueryPacketAcknowledgementCommitmentWithProof(bn, 1); err != nil {
 		t.Errorf("prover.QueryPacketAcknowledgementCommitmentWithProof failed: %v", err)
+	} else {
+		path := host.PacketAcknowledgementPath(
+			prover.chain.Path().PortID,
+			prover.chain.Path().ChannelID,
+			1,
+		)
+		verifyMembership(t, storageRoot, res.Proof, path, res.Acknowledgement)
+	}
+}
+
+func messageToCommitment(t *testing.T, msg proto.Message) []byte {
+	t.Helper()
+	marshaled, err := proto.Marshal(msg)
+	if err != nil {
+		t.Fatalf("proto.Marshal(msg) failed: %v", err)
+	}
+	commitment := crypto.Keccak256(marshaled)
+	return commitment
+}
+
+func verifyHeader(t *testing.T, header *Header, contractAddress common.Address) common.Hash {
+	t.Helper()
+	var rawAccountProof [][][]byte
+	if err := rlp.DecodeBytes(header.AccountProof, &rawAccountProof); err != nil {
+		t.Fatalf("rlp.DecodeBytes(header.AccountProof, ...) failed: %v", err)
+	}
+	var accountProof [][]byte
+	for _, raw := range rawAccountProof {
+		bz, err := rlp.EncodeToBytes(raw)
+		if err != nil {
+			t.Fatalf("rlp.EncodeToBytes(raw) failed: %v", err)
+		}
+		accountProof = append(accountProof, bz)
+	}
+
+	var quorumHeader types.Header
+	if err := rlp.DecodeBytes(header.GoQuorumHeaderRlp, &quorumHeader); err != nil {
+		t.Fatalf("rlp.DecodeBytes(header.GoQuorumHeaderRLP, ...) failed: %v", err)
+	}
+
+	var account state.Account
+	if rlpAccount, err := verifyProof(
+		quorumHeader.Root,
+		crypto.Keccak256(contractAddress.Bytes()),
+		accountProof,
+	); err != nil {
+		t.Fatalf("verifyProof failed: %v", err)
+	} else if err := rlp.DecodeBytes(rlpAccount, &account); err != nil {
+		t.Fatalf("rlp.DecodeBytes(rlpAccount, ...) failed: %v", err)
+	}
+
+	return account.Root
+}
+
+func verifyMembership(t *testing.T, root common.Hash, bzValueProof []byte, path string, commitment []byte) {
+	t.Helper()
+	var rawValueProof [][][]byte
+	if err := rlp.DecodeBytes(bzValueProof, &rawValueProof); err != nil {
+		t.Fatalf("rlp.DecodeBytes(bzValueProof, ...) failed: %v", err)
+	}
+	var valueProof [][]byte
+	for _, raw := range rawValueProof {
+		if bz, err := rlp.EncodeToBytes(raw); err != nil {
+			t.Fatalf("rlp.EncodeToBytes(raw) failed: %v", err)
+		} else {
+			valueProof = append(valueProof, bz)
+		}
+	}
+
+	key := crypto.Keccak256(crypto.Keccak256(append(crypto.Keccak256([]byte(path)), common.Hash{}.Bytes()...)))
+
+	recoveredCommitment, err := verifyProof(root, key, valueProof)
+	if err != nil {
+		t.Fatalf("verifyProof failed: %v", err)
+	}
+
+	rlpCommitment, err := rlp.EncodeToBytes(commitment)
+	if err != nil {
+		t.Fatalf("rlp.EncodeToBytes(commitment) failed: %v", err)
+	}
+	if !bytes.Equal(recoveredCommitment, rlpCommitment) {
+		t.Fatalf("value unmatch: %v(length=%d) != %v(length=%d)",
+			recoveredCommitment, len(recoveredCommitment),
+			rlpCommitment, len(rlpCommitment),
+		)
 	}
 }
